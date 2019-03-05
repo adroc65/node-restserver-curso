@@ -12,7 +12,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
  
 // parse application/json
 app.use(bodyParser.json())
-app.use( require('./routes/usuario'));
+
+// En /routes/index estan las rutas.
+app.use( require('./routes/index'));
 
 // ----------------------------------------------------------------------------------
 // Conexión a la DB
@@ -24,13 +26,7 @@ mongoose.connect(process.env.URLDB,
         
         console.log('Data Base Online!');
 });
-// mongoose.set('useFindAndModify', false);
-// mongoose.set('useCreateIndex', true); 
 
-// mongoose.connect(process.env.urlDB, { useNewUrlParser: true }, ( err, res ) => {
-//     if ( err ) throw err;
-//     console.log('Data Base Online!'); 
-// });
 // ----------------------------------------------------------------------------------
 
 app.listen(process.env.PORT, () =>{

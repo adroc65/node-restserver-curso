@@ -6,19 +6,20 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 
 const Usuario = require('../models/usuario');
+const { verificaToken, verificaAdmin_Role } = require('../middlewares/autenticacion');
 
 const app = express();
 // ------------------------------------------------------
 // GET: Listar los Usuarios:
 //
-app.get('/usuario', function (req, res) {
+app.get('/usuario', verificaToken, (req, res) => {
     
     let desde = req.query.desde || 0;
     desde = Number(desde);
     let limite = req.query.limite || 5;
     limite = Number(limite);
 
-    Usuario.find({ estado: true }, 'nombre email role estado google img')
+    Usuario.find({ estado: true }, '_id nombre email role estado google')
         .skip(desde)
         .limit(limite)
         .exec( (err, usuarios) =>{ 
@@ -29,9 +30,9 @@ app.get('/usuario', function (req, res) {
                 });
             }
             // Hacemos uso del esquema "Usuario"
-            // Se sustitulle el 'count' por 'collection.countDocuments'
+            // Se sustitulle el 'count' por '.countDocuments'
             //Usuario.count({ estado: true }, (err, conteo) =>{
-            Usuario.collection.countDocuments({ estado: true }, (err, conteo) =>{
+            Usuario.countDocuments({ estado: true }, (err, conteo) =>{
                 res.json({ 
                     ok: true,
                     usuarios,
@@ -46,7 +47,7 @@ app.get('/usuario', function (req, res) {
 // ------------------------------------------------------
 // POST: Crear entradas en la Base de Datos.
 //  
-  app.post('/usuario', function(req, res) {
+  app.post('/usuario', [verificaToken, verificaAdmin_Role] , function(req, res) {
 
     let body = req.body;
 
@@ -85,7 +86,7 @@ app.get('/usuario', function (req, res) {
   // PUT = Actualización de un Registro.
   // Se usa el "_.pick" para filtrar solo los parametros que se desea que se actualicen.
   //
-  app.put('/usuario/:id', function (req, res) {
+  app.put('/usuario/:id', [verificaToken, verificaAdmin_Role] , function (req, res) {
       let id = req.params.id;
       let body = _.pick( req.body, ['nombre', 'email', 'img', 'role', 'estado'] );
 
@@ -106,7 +107,7 @@ app.get('/usuario', function (req, res) {
   // ----------------------------------------------
   // Eliminar un Usuario:
   //
-  app.delete('/usuario/:id', function (req, res) {
+  app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role] , function (req, res) {
       
     let id = req.params.id;
 
