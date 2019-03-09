@@ -1,3 +1,6 @@
+// Rutina para subir la imagen de un Usuario o Producto.
+// -----------------------------------------------------
+
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const app = express();
@@ -60,7 +63,10 @@ app.put('/upload/:tipo/:id', function(req, res) { //Asi se llama en el navegador
     let nombreArchivo = `${ id }-${ new Date().getTime() }.${ extension }`;
 
     // Use the mv() method to place the file somewhere on your server
-    archivo.mv(`uploads/${ tipo }/${ nombreArchivo }`, (err) => {
+    let pathImagen = path.resolve(__dirname, `../../uploads/${ tipo }/${ nombreArchivo }`);
+    archivo.mv(pathImagen, (err) => {
+
+    //archivo.mv(`uploads/${ tipo }/${ nombreArchivo }`, (err) => {
 
         if (err) {
             return res.status(500).json({
