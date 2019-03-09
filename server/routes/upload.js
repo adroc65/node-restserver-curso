@@ -13,8 +13,8 @@ const path = require('path');
 
 
 // default options
-app.use( fileUpload({ useTempFiles: true }) );
-
+// app.use( fileUpload({ useTempFiles: true }) ); //-> error de paths en HEROKU
+app.use( fileUpload() );
 
 app.put('/upload/:tipo/:id', function(req, res) { //Asi se llama en el navegador, es usuario o producto (tipo)
 
@@ -62,7 +62,8 @@ app.put('/upload/:tipo/:id', function(req, res) { //Asi se llama en el navegador
     //Cambiar nombre al archivo:
     let nombreArchivo = `${ id }-${ new Date().getTime() }.${ extension }`;
 
-    // Use the mv() method to place the file somewhere on your server
+    // Use the mv() method to place the file somewhere on your server.
+    // Usamos la ruta completa, usando "paths".
     let pathImagen = path.resolve(__dirname, `../../uploads/${ tipo }/${ nombreArchivo }`);
     archivo.mv(pathImagen, (err) => {
 
