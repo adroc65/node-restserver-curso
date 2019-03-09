@@ -78,19 +78,18 @@ app.get('/usuario', verificaToken, (req, res) => {
             usuario: usuarioDB
         });
     });
-
   
   });
 
   // ----------------------------------------------
   // PUT = Actualización de un Registro.
   // Se usa el "_.pick" para filtrar solo los parametros que se desea que se actualicen.
-  //
+  // ------------------------------------------------
   app.put('/usuario/:id', [verificaToken, verificaAdmin_Role] , function (req, res) {
       let id = req.params.id;
       let body = _.pick( req.body, ['nombre', 'email', 'img', 'role', 'estado'] );
 
-      Usuario.findByIdAndUpdate( id, body, { new: true, runValidators: true } , (err, usuarioDB) =>{
+    Usuario.findOneAndUpdate( id, body, { new: true, runValidators: true } , (err, usuarioDB) =>{
         if( err ){
             return res.status(400).json({
                 ok: false,
@@ -100,9 +99,9 @@ app.get('/usuario', verificaToken, (req, res) => {
         res.json({
             ok: true,
             usuario: usuarioDB
-         });
+        });
       });
-  });
+    });
 
   // ----------------------------------------------
   // Eliminar un Usuario:

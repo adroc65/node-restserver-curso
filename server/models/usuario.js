@@ -1,5 +1,3 @@
-
-
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
@@ -10,7 +8,8 @@ let rolesValidos = {
 };
 
 let Schema = mongoose.Schema;
-let mongooseHidden = require('mongoose-hidden')();
+// Si se usa "mongooseHidden", se esconde el ID
+//let mongooseHidden = require('mongoose-hidden')();
 
 let usuarioSchema = new Schema ({
     nombre: {
@@ -24,8 +23,8 @@ let usuarioSchema = new Schema ({
     },
     password: {
         type : String,
-        required: [true, 'La contraseña es obligatoria!'],
-        hide: true        
+        required: [true, 'La contraseña es obligatoria!']
+        //hide: true        
     },
     img: {
         type: String,
@@ -47,7 +46,15 @@ let usuarioSchema = new Schema ({
 
 });
 
-usuarioSchema.plugin( mongooseHidden );
+usuarioSchema.methods.toJSON = function() {
+
+    let user = this;
+    let userObject = user.toObject();
+    delete userObject.password;
+
+    return userObject;
+}
+//usuarioSchema.plugin( mongooseHidden );
 usuarioSchema.plugin( uniqueValidator, { message: '{PATH} debe de ser único'} );
 
 module.exports = mongoose.model( 'Usuario', usuarioSchema );
